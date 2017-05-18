@@ -1,0 +1,15 @@
+version: '3'
+services:
+    webredirect:
+      image: artisticcheese/iis-basis:latest
+      environment: 
+        - "ContainerAdmin=${ContainerAdmin}"
+        - "ContainerPassword=${ContainerPassword}"
+        - "SHELL=powershell.exe"
+      ports:
+        - "80"
+        - "55593"
+networks:
+  default:
+    external:
+      name: nat
