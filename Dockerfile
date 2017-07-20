@@ -1,14 +1,13 @@
 # escape=`
-FROM microsoft/iis
+FROM microsoft/windowsservercore:latest
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'Continue'; $verbosePreference='Continue';"]
 WORKDIR prep
-ADD server_config.ps1 .\server_config.ps1
-ADD startup.ps1 .\startup.ps1
-ADD https://github.com/Microsoft/IIS.Administration/releases/download/v2.0.0/IISAdministrationSetup.exe .\iisadmin.exe
+ADD "http://go.microsoft.com/fwlink/?LinkId=829373" ".\iisadmin.exe"
 COPY ["appsettings.json","C:\\Program Files\\IIS Administration\\2.0.0\\Microsoft.IIS.Administration\\config\\appsettings.json"]
 RUN start-process -Filepath .\iisadmin.exe -ArgumentList  @('/install', '/q', '/norestart') -Wait 
-RUN .\server_config.ps1; del .\server_config.ps1; del .\iisadmin.exe;
-COPY ["appsettings.json","C:\\Program Files\\IIS Administration\\2.0.0\\Microsoft.IIS.Administration\\config\\appsettings.json"]
-COPY ["api-keys.json","C:\\Program Files\\IIS Administration\\2.0.0\\Microsoft.IIS.Administration\\config\\api-keys.json"]
+ADD ["\\artifacts\\*", "./"]
+COPY ["*.ps1", "creds.json", "c:\\startup\\"]
+RUN .\server_config.ps1; .\website_config.ps1
+COPY ["appsettings.json","api-keys.json", "C:\\Program Files\\IIS Administration\\2.0.0\\Microsoft.IIS.Administration\\config\\"]
 EXPOSE 80 55539
-ENTRYPOINT powershell.exe .\startup.ps1; del .\startup.ps1; C:\ServiceMonitor.exe w3svc
+ENTRYPOINT powershell.exe c:\startup\startup.ps1; powershell.exe C:\startup\entrypoint.ps1

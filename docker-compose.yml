@@ -4,13 +4,11 @@ services:
       build: .
       image: artisticcheese/iis-admin:latest
       environment: 
-        - "ContainerAdmin=${ContainerAdmin}"
-        - "ContainerPassword=${ContainerPassword}"
+        - "SecretLocation=c:\\startup\\creds.json"
         - "SHELL=powershell.exe"
       ports:
         - "80"
         - "55593"
-networks:
-  default:
-    external:
-      name: nat
+      volumes:
+        - d:\docker\logs\:c:\inetpub\logs\logfiles\host
+        - d:\docker\freb\:c:\inetpub\logs\logfiles\freb

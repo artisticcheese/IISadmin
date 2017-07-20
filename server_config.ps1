@@ -2,6 +2,11 @@ Configuration BasicIIS
  {
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration' 
     node localhost {
+        WindowsFeature Web-Server
+        {
+            Name ="Web-Server"
+            Ensure="Present"
+        }
         WindowsFeature IIS {
             Ensure = "Present"
             Name = "Web-Mgmt-Service"
